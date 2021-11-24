@@ -1,0 +1,7 @@
+rpc: https://www.ghostchu.com/xmlrpc.php
+username: syncbot
+password: PASSWORD
+title-prefix: '[说说同步]'
+post-type: shuoshuo
+sync-mode: 0
+sync-mode-keyword: '[wp-sync-skip]'

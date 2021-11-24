@@ -1,0 +1,5 @@
+/.jython_cache/
+/.idea/
+/target/
+/QzoneSync.iml
+/venv/
