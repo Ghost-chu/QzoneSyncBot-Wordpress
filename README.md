@@ -42,3 +42,9 @@ sync-mode-keyword: '[wp-sync-skip]' # keyword
 https://github.com/zhyea/wordpress-client
 
 https://github.com/SmartHypercube/Qzone-API
+
+### 关于本项目
+
+佛系开发，不考虑添加新功能，不接受任何建议，BUG修复随缘，就算你提到了我也不一定会修，能用就行。
+
+MIT License
