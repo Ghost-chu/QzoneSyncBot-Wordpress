@@ -40,7 +40,7 @@ public class Main {
         StringBuilder builder = new StringBuilder();
         Process proc;
         try {
-            proc = Runtime.getRuntime().exec("python main.py");
+            proc = Runtime.getRuntime().exec(config.getOrSetDefault("shell","python3 main.py"));
             BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
