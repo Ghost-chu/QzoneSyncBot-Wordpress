@@ -7,4 +7,5 @@ file_context = open('cookies.txt').read()
 qz = Qzone(**cookie_str_to_dict(file_context))
 dat = qz.emotion_list(int(uid),1)[0]
 dat.load()
-print(base64.b64encode(json.dumps(dat.getRaw()).encode()).decode())
+obj = json.dumps(obj=dat, default=lambda x : x.__dict__, sort_keys=False, indent=2)
+print(base64.b64encode(obj.encode()).decode())

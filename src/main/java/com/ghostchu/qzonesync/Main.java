@@ -7,6 +7,7 @@ import de.leonhard.storage.internal.settings.ConfigSettings;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import org.chobit.wp.WordPress;
 import org.chobit.wp.model.request.PostRequest;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -94,9 +95,6 @@ public class Main {
 
         System.out.println(json);
         Emotion emotion = new Gson().fromJson(json, Emotion.class);
-        if (emotion.getSecret() != 0) {
-            throw new PostNotSendException("Secret emotion, skipped");
-        }
         if(mode == 0){
             if(emotion.getContent().contains(modeKeyword)){
                 throw new PostNotSendException("Skip keyword detected.");
@@ -106,13 +104,19 @@ public class Main {
                 throw new PostNotSendException("Sync keyword detected.");
             }
         }
-        PostContainer postContainer = new PostContainer(emotion.getContent());
-        WordPress wp = new WordPress(rpc, username, password);
+        PostContainer postContainer = new PostContainer(emotion);
+
         PostRequest post = new PostRequest();
         post.setPostTitle(titlePrefix + postContainer.getTitle());
-        post.setPostContent(postContainer.getContent());
+        if(postContainer.getForwards() != null){
+            post.setPostContent(postContainer.getContent()+"\n\n"+postContainer.getForwards());
+        }else{
+            post.setPostContent(postContainer.getContent());
+        }
+        LOGGER.info("内容："+post.getPostContent());
         post.setPostType(postType);
         post.setPostName(postContainer.getTitle());
+        WordPress wp = new WordPress(rpc, username, password);
         return wp.newPost(post);
     }
 
@@ -120,9 +124,19 @@ public class Main {
     static class PostContainer {
         private String title;
         private String content;
+        @Nullable
+        private String forwards;
 
-        public PostContainer(String body) {
-            parse(body);
+        public PostContainer(Emotion emotion) {
+            parseTitleAndContent(emotion.getContent());
+            forwards = readForwardEmotion(emotion.getOrigin());
+        }
+
+        public String getForwards() {
+            if(forwards == null || forwards.isEmpty()){
+                return null;
+            }
+            return "转发自：\n"+forwards;
         }
 
         public String getTitle() {
@@ -133,7 +147,16 @@ public class Main {
             return content;
         }
 
-        private void parse(String body) {
+
+        public String readForwardEmotion(Emotion.OriginDTO emotion){
+            StringBuilder builder = new StringBuilder();
+            builder.append(emotion.getNickname()).append(": ").append(emotion.getContent());
+            if(emotion.getOrigin() != null){
+                builder.append("\n\t").append(readForwardEmotion(emotion.getOrigin()).replace("\t","\t\t"));
+            }
+            return builder.toString();
+        }
+        private void parseTitleAndContent(String body) {
             String[] lines = body.split("\n", 2);
 
             if(lines.length < 2){
@@ -142,6 +165,7 @@ public class Main {
                     this.content = body;
                 }else{
                     this.title = body;
+                    this.content = body;
                 }
             }else{
                 if(lines[0].length() > 20){

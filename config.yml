@@ -5,3 +5,4 @@ title-prefix: '[说说同步]'
 post-type: shuoshuo
 sync-mode: 0
 sync-mode-keyword: '[wp-sync-skip]'
+shell: python3 main.py
