@@ -136,7 +136,7 @@ public class Main {
             if(forwards == null || forwards.isEmpty()){
                 return null;
             }
-            return "转发自：\n"+forwards;
+            return "---------------------\n<i>->转发：</i>\n"+forwards;
         }
 
         public String getTitle() {
@@ -150,9 +150,9 @@ public class Main {
 
         public String readForwardEmotion(Emotion.OriginDTO emotion){
             StringBuilder builder = new StringBuilder();
-            builder.append(emotion.getNickname()).append(": ").append(emotion.getContent());
+            builder.append("<strong>").append(emotion.getNickname()).append(": </strong>").append(emotion.getContent());
             if(emotion.getOrigin() != null){
-                builder.append("\n\t").append(readForwardEmotion(emotion.getOrigin()).replace("\t","\t\t"));
+                builder.append("---------------------\n<i>->转发：</i>\n").append(readForwardEmotion(emotion.getOrigin()));
             }
             return builder.toString();
         }
